@@ -25,17 +25,21 @@ public partial class MainPage : ContentPage
 				FontAttributes = FontAttributes.Bold,
 				HorizontalTextAlignment = TextAlignment.Center,
 				FontSize = 18,
-				TextColor = new Color(0, 0, 0)
+				TextColor = new Color(0, 0, 0),
+				Margin = 10,
             };
 			header.SetBinding(Label.TextProperty, "Name");
 
 			Image image = new Image { WidthRequest = 150, HeightRequest = 150 };
 			image.SetBinding(Image.SourceProperty, "Image");
 
-			Label description = new Label { HorizontalTextAlignment= TextAlignment.Center, TextColor = new Color(0, 0, 0) };
+			Label description = new Label { HorizontalTextAlignment= TextAlignment.Center, TextColor = new Color(0, 0, 0), Margin=10 };
 			description.SetBinding(Label.TextProperty, "Description");
 
 			StackLayout st = new StackLayout() {header, image, description };
+			st.WidthRequest = 300;
+			st.HeightRequest = 300;
+			st.BackgroundColor = Colors.WhiteSmoke;
 			Frame frame = new Frame();
 			frame.Content= st;
 			return frame;
