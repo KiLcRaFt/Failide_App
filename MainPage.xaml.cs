@@ -1,24 +1,31 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.Maui.Controls;
+using System.ComponentModel;
 
 namespace Failide_App;
 
 public partial class MainPage : ContentPage
 {
 	int count = 0;
-	public MainPage()
+    List<Product> products = new List<Product>
+        {
+            new Product {Name= "Name1", Description = "Dis1", Image = "dotnet_Bot.svg"}
+        };
+    List<Product> products_ru = new List<Product>
+        {
+            new Product {Name= "имя1", Description = "Дис1", Image = "dotnet_Bot.svg"}
+        };
+    public MainPage()
 	{
 		//InitializeComponent();
 		CarouselView carouselView = new CarouselView
 		{
 			VerticalOptions = LayoutOptions.Center,
 		};
-		carouselView.ItemsSource = new List<Product>
-		{
-			new Product {Name="Name1", Description="Dis1", Image="dotnet_bot.svg"},
-            new Product {Name="Name2", Description="Dis2", Image="dotnet_bot.svg"},
-            new Product {Name="Name3", Description="Dis3", Image="dotnet_bot.svg"}
-        };
-		carouselView.ItemTemplate = new DataTemplate(() =>
+
+        OnAppearing();
+        carouselView.ItemsSource = products;
+
+        carouselView.ItemTemplate = new DataTemplate(() =>
 		{
 			Label header = new Label
 			{
@@ -46,10 +53,18 @@ public partial class MainPage : ContentPage
 
 
 		});
-		Content= carouselView;
+
+        Content = carouselView;
 	}
 
-	private void OnCounterClicked(object sender, EventArgs e)
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadMauiAsset();
+        ((CarouselView)Content).ItemsSource = products;
+    }
+
+        private void OnCounterClicked(object sender, EventArgs e)
 	{
 		count++;
 
@@ -60,5 +75,33 @@ public partial class MainPage : ContentPage
 
 		SemanticScreenReader.Announce(CounterBtn.Text);
 	}
+    private async Task LoadMauiAsset()
+    {
+        using var stream = await FileSystem.OpenAppPackageFileAsync("Synad_eesti.txt");
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream)
+        {
+            string line = await reader.ReadLineAsync();
+            string[] parts = line.Split(',');
+            if (parts.Length >= 4)
+            {
+                products.Add(new Product
+                {
+                    Name = parts[0],
+                    Description = parts[1],
+                    Image = "dotnet_bot.svg"
+                });
+                products_ru.Add(new Product
+                {
+                    Name = parts[2],
+                    Description = parts[3],
+                    Image = "dotnet_bot.svg"
+                });
+
+            }
+        }
+    }
+
 }
 
